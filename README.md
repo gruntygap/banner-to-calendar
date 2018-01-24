@@ -10,3 +10,6 @@ https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=201851
 
 We have to go to: https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl
 Then we take all the dates from the menu, and then once someone selects one. We grab the value and input it into the link on line 9.
+
+
+https://developers.google.com/api-client-library/python/
