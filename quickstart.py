@@ -168,25 +168,37 @@ def main():
         print(class_.class_location)
         start = datetime.datetime.combine(class_.class_date_start, class_.class_start)
         end = datetime.datetime.combine(class_.class_date_start, class_.class_end)
-        # event = {
-        #     'summary': class_.class_name,
-        #     'location': '800 Howard St., San Francisco, CA 94103',
-        #     'description': 'A chance to hear more about Google\'s developer products.',
-        #     'start': {
-        #         'dateTime': '2018-05-28T09:00:00-07:00',
-        #         'timeZone': 'America/Los_Angeles',
-        #     },
-        #     'end': {
-        #         'dateTime': '2018-05-28T17:00:00-07:00',
-        #         'timeZone': 'America/Los_Angeles',
-        #     },
-        #     'recurrence': [
-        #         'RRULE:FREQ=DAILY;COUNT=2'
-        #     ],
-        # }
-        #
-        # event = service.events().insert(calendarId='primary', body=event).execute()
-        # print('Event created: %s' % (event.get('htmlLink')))
+        date_start = class_.class_date_start.strftime('%Y%m%dT000000Z')
+        until = class_.class_date_end.strftime("%Y%m%dT000000Z")
+        days = ""
+        count = 1
+        for day in class_.class_days:
+            if len(class_.class_days) == count:
+                days = days + day
+            else:
+                days = days + day + ","
+            count = count + 1
+
+        event = {
+            'summary': class_.class_name,
+            'location': class_.class_location,
+            'description': '',
+            'start': {
+                'dateTime': start.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                'timeZone': 'America/Chicago',
+            },
+            'end': {
+                'dateTime': end.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                'timeZone': 'America/Chicago',
+            },
+            'recurrence': [
+                'DTSTART;TZID=America/Chicago:'+date_start+';'
+                'RRULE:FREQ=WEEKLY;BYDAY='+days+';UNTIL='+until+';'
+            ],
+        }
+
+        event = service.events().insert(calendarId='primary', body=event).execute()
+        print('Event created: %s' % (event.get('htmlLink')))
 
 
 class Class:
