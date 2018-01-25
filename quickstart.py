@@ -115,8 +115,8 @@ def main():
                 # Parse class times
                 if counter == 2:
                     time_range = data.string.split(' - ')
-                    new_class.class_start = time_range[0]
-                    new_class.class_end = time_range[1]
+                    new_class.class_start = datetime.datetime.strptime(time_range[0], "%I:%M %p")
+                    new_class.class_end = datetime.datetime.strptime(time_range[1], "%I:%M %p")
                 # Parse MTWRF
                 if counter == 3:
                     new_class.class_days = parse_dotw(data.string)
@@ -126,8 +126,8 @@ def main():
                 # Parse Date Range
                 if counter == 5:
                     date_range = data.string.split(' - ')
-                    new_class.class_date_start = date_range[0]
-                    new_class.class_date_end = date_range[1]
+                    new_class.class_date_start = datetime.datetime.strptime(date_range[0], "%b %d, %Y")
+                    new_class.class_date_end = datetime.datetime.strptime(date_range[1], "%b %d, %Y")
 
 
                 counter = counter + 1
