@@ -15,3 +15,5 @@ Then we take all the dates from the menu, and then once someone selects one. We 
 https://developers.google.com/api-client-library/python/
 
 https://developers.google.com/google-apps/calendar/quickstart/python#troubleshooting
+
+https://developers.google.com/google-apps/calendar/create-events
