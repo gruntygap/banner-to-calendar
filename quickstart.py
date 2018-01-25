@@ -77,15 +77,15 @@ def parse_dotw(rand):
     chars = list(rand)
     for letter in chars:
         if letter == "M":
-            days.append('Monday')
+            days.append('MO')
         if letter == "T":
-            days.append('Tuesday')
+            days.append('TU')
         if letter == "W":
-            days.append('Wednesday')
+            days.append('WE')
         if letter == "R":
-            days.append('Thursday')
+            days.append('TH')
         if letter == "F":
-            days.append('Friday')
+            days.append('FR')
     return days
 
 
@@ -161,6 +161,8 @@ def main():
     calendar_list_entry = service.calendarList().get(calendarId='primary').execute()
 
     print(calendar_list_entry['summary'])
+
+
 
 
 class Class:
