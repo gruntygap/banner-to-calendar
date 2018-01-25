@@ -115,8 +115,8 @@ def main():
                 # Parse class times
                 if counter == 2:
                     time_range = data.string.split(' - ')
-                    new_class.class_start = datetime.datetime.strptime(time_range[0], "%I:%M %p")
-                    new_class.class_end = datetime.datetime.strptime(time_range[1], "%I:%M %p")
+                    new_class.class_start = datetime.datetime.strptime(time_range[0], "%I:%M %p").time()
+                    new_class.class_end = datetime.datetime.strptime(time_range[1], "%I:%M %p").time()
                 # Parse MTWRF
                 if counter == 3:
                     new_class.class_days = parse_dotw(data.string)
@@ -161,8 +161,32 @@ def main():
     calendar_list_entry = service.calendarList().get(calendarId='primary').execute()
 
     print(calendar_list_entry['summary'])
-
-
+    print()
+    print(" -- Adding Classes to Calendar -- ")
+    for class_ in classes:
+        print(class_.class_name)
+        print(class_.class_location)
+        start = datetime.datetime.combine(class_.class_date_start, class_.class_start)
+        end = datetime.datetime.combine(class_.class_date_start, class_.class_end)
+        # event = {
+        #     'summary': class_.class_name,
+        #     'location': '800 Howard St., San Francisco, CA 94103',
+        #     'description': 'A chance to hear more about Google\'s developer products.',
+        #     'start': {
+        #         'dateTime': '2018-05-28T09:00:00-07:00',
+        #         'timeZone': 'America/Los_Angeles',
+        #     },
+        #     'end': {
+        #         'dateTime': '2018-05-28T17:00:00-07:00',
+        #         'timeZone': 'America/Los_Angeles',
+        #     },
+        #     'recurrence': [
+        #         'RRULE:FREQ=DAILY;COUNT=2'
+        #     ],
+        # }
+        #
+        # event = service.events().insert(calendarId='primary', body=event).execute()
+        # print('Event created: %s' % (event.get('htmlLink')))
 
 
 class Class:
