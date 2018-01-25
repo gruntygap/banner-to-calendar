@@ -1,6 +1,8 @@
 from __future__ import print_function
 import httplib2
 import os
+import cookielib
+import mechanize
 
 from apiclient import discovery
 from oauth2client import client
@@ -50,12 +52,31 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+
+def get_banner_credentials(user, password):
+    jar = cookielib.FileCookieJar("cookies")
+    browser = mechanize.Browser()
+    browser.set_handle_robots(False)
+    browser.set_cookiejar(jar)
+    browser.open('https://auth.bethel.edu/cas/login')
+    browser.select_form(nr=0)  # check yoursite forms to match the correct number
+    browser['username'] = user  # use the proper input type=text name
+    browser['password'] = password  # use the proper input type=password name
+    browser.submit()
+    # return jar
+    browser.open('https://www.bethel.edu/its/banner/ssb')
+    # Change the line below so it will allow for selection of a term.
+    response = browser.open('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=201851')
+    print(response.read())
+
+
 def main():
     """Shows basic usage of the Google Calendar API.
 
     Creates a Google Calendar API service object and outputs a list of the next
     10 events on the user's calendar.
     """
+    get_banner_credentials(raw_input("enter banner username: "), raw_input("enter banner password: "))
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
