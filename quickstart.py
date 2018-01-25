@@ -3,6 +3,7 @@ import httplib2
 import os
 import cookielib
 import mechanize
+from bs4 import BeautifulSoup
 
 from apiclient import discovery
 from oauth2client import client
@@ -21,7 +22,7 @@ except ImportError:
 # at ~/.credentials/calendar-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+APPLICATION_NAME = 'Banner to Calendar'
 
 
 def get_credentials():
@@ -67,16 +68,79 @@ def get_banner_credentials(user, password):
     browser.open('https://www.bethel.edu/its/banner/ssb')
     # Change the line below so it will allow for selection of a term.
     response = browser.open('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=201851')
-    print(response.read())
+    return response.read()
+
+
+# Parses the Day of the Week (Ex. MWF = [Monday, Wednesday, Friday])
+def parse_dotw(rand):
+    days = []
+    chars = list(rand)
+    for letter in chars:
+        if letter == "M":
+            days.append('Monday')
+        if letter == "T":
+            days.append('Tuesday')
+        if letter == "W":
+            days.append('Wednesday')
+        if letter == "R":
+            days.append('Thursday')
+        if letter == "F":
+            days.append('Friday')
+    return days
 
 
 def main():
+    # First gets the class data from banner
+    html = get_banner_credentials(raw_input("enter banner username: "), raw_input("enter banner password: "))
+    soup = BeautifulSoup(html, 'html.parser')
+    all_classes = soup.find('div', class_="pagebodydiv")
+    all_tables = all_classes.find_all('table', 'datadisplaytable')
+    # Table part is the number that the current table is on, part 1 is just scraping for a title
+    # part 2 is scraping for the class times, days of class, location of the class, and date range for the class
+    table_part = 1
+    new_class = Class()
+    classes = []
+    for table in all_tables:
+        print(table_part)
+        if table_part == 1:
+            table_part = 2
+            title = table.find('caption', class_='captiontext')
+            new_class.class_name = title.string
+        elif table_part == 2:
+            table_part = 1
+            nothing = table.find('tr')
+            info_table = nothing.find_next('tr').find_all('td')
+            counter = 1
+            for data in info_table:
+                # Parse class times
+                if counter == 2:
+                    time_range = data.string.split(' - ')
+                    new_class.class_start = time_range[0]
+                    new_class.class_end = time_range[1]
+                # Parse MTWRF
+                if counter == 3:
+                    new_class.class_days = parse_dotw(data.string)
+                # Parse Location
+                if counter == 4:
+                    new_class.class_location = data.string
+                # Parse Date Range
+                if counter == 5:
+                    date_range = data.string.split(' - ')
+                    new_class.class_date_start = date_range[0]
+                    new_class.class_date_end = date_range[1]
+
+
+                counter = counter + 1
+            # Adds the class to the classes array
+            classes.append(new_class)
+            # Resets the temp Class
+            new_class = Class()
+
     """Shows basic usage of the Google Calendar API.
 
-    Creates a Google Calendar API service object and outputs a list of the next
-    10 events on the user's calendar.
-    """
-    get_banner_credentials(raw_input("enter banner username: "), raw_input("enter banner password: "))
+        Creates a Google Calendar API service object and outputs a list of the next
+        10 events on the user's calendar.
+        """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
@@ -97,6 +161,73 @@ def main():
     calendar_list_entry = service.calendarList().get(calendarId='primary').execute()
 
     print(calendar_list_entry['summary'])
+
+
+class Class:
+    def __init__(self):
+        self.class_name = "default"
+        self.class_start = "default"
+        self.class_end = "default"
+        self.class_days = "default"
+        self.class_location = "default"
+        self.class_date_start = "default"
+        self.class_date_end = "default"
+
+    @property
+    def class_name(self):
+        return self.class_name
+
+    @class_name.setter
+    def class_name(self, value):
+        self.class_name = value
+
+    @property
+    def class_location(self):
+        return self.class_location
+
+    @class_location.setter
+    def class_location(self, value):
+        self.class_location = value
+
+    @property
+    def class_days(self):
+        return self.class_days
+
+    @class_days.setter
+    def class_days(self, value):
+        self.class_days = value
+
+    @property
+    def class_start(self):
+        return self.class_start
+
+    @class_start.setter
+    def class_start(self, value):
+        self.class_start = value
+
+    @property
+    def class_end(self):
+        return self.class_end
+
+    @class_end.setter
+    def class_end(self, value):
+        self.class_end = value
+
+    @property
+    def class_date_start(self):
+        return self.class_date_start
+
+    @class_date_start.setter
+    def class_date_start(self, value):
+        self.class_date_start = value
+
+    @property
+    def class_date_end(self):
+        return self.class_date_end
+
+    @class_date_end.setter
+    def class_date_end(self, value):
+        self.class_date_end = value
 
 
 if __name__ == '__main__':
