@@ -4,6 +4,8 @@ import os
 import cookielib
 import mechanize
 from bs4 import BeautifulSoup
+import getpass
+
 
 from apiclient import discovery
 from oauth2client import client
@@ -91,7 +93,8 @@ def parse_dotw(rand):
 
 def main():
     # First gets the class data from banner
-    html = get_banner_credentials(raw_input("enter banner username: "), raw_input("enter banner password: "))
+    # html = get_banner_credentials(raw_input("enter banner username: "), raw_input("enter banner password: "))
+    html = get_banner_credentials(raw_input("enter banner username: "), getpass.getpass("enter banner password: "))
     soup = BeautifulSoup(html, 'html.parser')
     all_classes = soup.find('div', class_="pagebodydiv")
     all_tables = all_classes.find_all('table', 'datadisplaytable')
@@ -180,20 +183,19 @@ def main():
             count = count + 1
 
         event = {
-            'summary': class_.class_name,
-            'location': class_.class_location,
-            'description': '',
-            'start': {
-                'dateTime': start.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
-                'timeZone': 'America/Chicago',
+            "summary": class_.class_name,
+            "location": class_.class_location,
+            "description": "",
+            "start": {
+                "dateTime": start.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "timeZone": "America/Chicago",
             },
-            'end': {
-                'dateTime': end.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
-                'timeZone': 'America/Chicago',
+            "end": {
+                "dateTime": end.strftime("%Y-%m-%dT%H:%M:%S-06:00"),
+                "timeZone": "America/Chicago",
             },
-            'recurrence': [
-                'DTSTART;TZID=America/Chicago:'+date_start+';'
-                'RRULE:FREQ=WEEKLY;BYDAY='+days+';UNTIL='+until+';'
+            "recurrence": [
+                "RRULE:FREQ=WEEKLY;BYDAY="+days+";UNTIL="+until+";"
             ],
         }
 
