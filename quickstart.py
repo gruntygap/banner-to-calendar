@@ -69,7 +69,7 @@ def get_banner_credentials(user, password):
     # return jar
     browser.open('https://www.bethel.edu/its/banner/ssb')
     # Change the line below so it will allow for selection of a term.
-    response = browser.open('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=201851')
+    response = browser.open('https://banner.bethel.edu/prod8/bwskfshd.P_CrseSchdDetl?term_in=201951')
     return response.read()
 
 
@@ -198,9 +198,11 @@ def main():
                 "RRULE:FREQ=WEEKLY;BYDAY="+days+";UNTIL="+until+";"
             ],
         }
-
-        event = service.events().insert(calendarId='primary', body=event).execute()
-        print('Event created: %s' % (event.get('htmlLink')))
+        try:
+            event = service.events().insert(calendarId='primary', body=event).execute()
+            print('Event created: %s' % (event.get('htmlLink')))
+        except:
+            print('CLASS NOT ADDED - MAY BE ONLINE')
 
 
 class Class:
