@@ -17,3 +17,14 @@ https://developers.google.com/api-client-library/python/
 https://developers.google.com/google-apps/calendar/quickstart/python#troubleshooting
 
 https://developers.google.com/google-apps/calendar/create-events
+
+
+# THIS REPO HAS BEEN ARCHIVED.
+I used this tool for a few semesters before auth.bethel.edu changed.
+It seems that bethel decided to go with a third party which uses generated tokens for each login.
+Fancy javascript and the likes have probably broken this setup, which worked FLAWLESSLY.
+There is a chance that I will visit this setup again, as beautifulSoup is the best html parser out there.
+
+But for now, I will lay this project to sleep, in an archived form.
+
+I hope to finish what I started with banner-to-calendar mark II. Check my Repos
